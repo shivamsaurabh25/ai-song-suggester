@@ -13,6 +13,7 @@ const moods = [
 
 export default function UploadImage() {
   const [image, setImage] = useState(null);
+  const [description, setDescription] = useState('');
   const [mood, setMood] = useState('');
   const [language, setLanguage] = useState('');
   const [songs, setSongs] = useState([]);
@@ -24,7 +25,7 @@ export default function UploadImage() {
     setLoading(true);
 
     try {
-      const query = `${mood} ${language} song`;
+      const query = `${description || mood} ${language} song`;
       const response = await axios.get(
         `https://www.googleapis.com/youtube/v3/search`,
         {
@@ -52,11 +53,9 @@ export default function UploadImage() {
   return (
     <div className="glassmorphism p-6 rounded-xl max-w-3xl mx-auto bg-white/10 backdrop-blur-md shadow-xl">
       <h2 className="text-xl font-semibold mb-4 text-center">Upload Photo & Get Song Suggestions</h2>
-      
+
       <div className="flex flex-col items-center gap-4">
-        <input type="file" accept="image/*" onChange={handleFileChange} />
-        {image && <img src={image} alt="preview" className="h-48 rounded-lg object-cover" />}
-        
+
         <input
           type="text"
           placeholder="Enter your YouTube API Key"
@@ -64,6 +63,7 @@ export default function UploadImage() {
           onChange={(e) => setApiKey(e.target.value)}
           className="w-full mt-2 p-2 bg-white/10 border border-white/20 rounded text-white placeholder:text-gray-300"
         />
+
         <a
           href="https://console.cloud.google.com/apis/credentials"
           target="_blank"
@@ -73,22 +73,34 @@ export default function UploadImage() {
           Get your API key from Google Cloud Console
         </a>
 
-        <div className="mt-4 w-full">
-          <label className="block mb-2">Choose Mood:</label>
-          <div className="flex flex-wrap gap-2">
-            {moods.map((m) => (
-              <button
-                key={m}
-                onClick={() => setMood(m)}
-                className={`px-4 py-2 rounded-full text-sm ${
-                  mood === m ? 'bg-blue-500 text-white' : 'bg-white/20 text-white'
-                }`}
-              >
-                {m}
-              </button>
-            ))}
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+        {image && <img src={image} alt="preview" className="h-48 rounded-lg object-cover" />}
+
+        <input
+          type="text"
+          placeholder="Describe the image/vibe (e.g., calm ocean sunset)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full mt-4 p-2 bg-white/10 border border-white/20 rounded text-white placeholder:text-gray-300"
+        />
+
+        {!description && (
+          <div className="mt-4 w-full">
+            <label className="block mb-2">Choose Mood:</label>
+            <div className="flex flex-wrap gap-2">
+              {moods.map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setMood(m)}
+                  className={`px-4 py-2 rounded-full text-sm ${mood === m ? 'bg-blue-500 text-white' : 'bg-white/20 text-white'
+                    }`}
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <input
           type="text"
