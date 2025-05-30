@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
 
-export default function SongSuggester() {
+export default function UploadImage() {
   const [image, setImage] = useState(null);
   const [imageBlob, setImageBlob] = useState(null);
   const [geminiKey, setGeminiKey] = useState('');
@@ -11,7 +10,6 @@ export default function SongSuggester() {
   const [loading, setLoading] = useState(false);
   const [songs, setSongs] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [darkMode, setDarkMode] = useState(true);
 
   useEffect(() => {
     const gemini = localStorage.getItem('gemini_api_key');
@@ -43,8 +41,7 @@ export default function SongSuggester() {
   };
 
   const generateSongQueryPrompt = () => {
-    return `You are a vibe-based song recommender. Given a user's photo, describe the mood or vibe of the photo in a short phrase that could be used as a YouTube search query for a matching song. Include the language preference "${language}". 
-Respond with just the search query.`;
+    return `You are a vibe-based song recommender. Given a user's photo, describe the mood or vibe of the photo in a short phrase that could be used as a YouTube search query for a matching song. Include the language preference "${language}". Respond with just the search query.`;
   };
 
   const handleGenerateSongs = async () => {
@@ -77,8 +74,7 @@ Respond with just the search query.`;
         }
       );
 
-      const query =
-        geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+      const query = geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
 
       if (!query) {
         alert('Gemini did not return a valid query.');
@@ -116,105 +112,93 @@ Respond with just the search query.`;
   };
 
   return (
-    <div
-      className={`max-w-3xl mx-auto p-6 rounded-xl shadow-lg min-h-screen transition-colors ${
-        darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'
-      }`}
-    >
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold text-center w-full">
-          AI-Powered Instagram Song Suggester 🎶
-        </h1>
-        <button onClick={() => setDarkMode(!darkMode)} className="ml-4 text-xl">
-          {darkMode ? <SunIcon /> : <MoonIcon />}
+    <div className="max-w-2xl mx-auto mt-10 p-6 rounded-2xl backdrop-blur-md bg-white/30 dark:bg-white/10 border border-white/20 shadow-md text-black dark:text-white">
+      {/* Inputs */}
+      <div className="space-y-4">
+        <input
+          type="text"
+          placeholder="Enter Gemini API Key"
+          value={geminiKey}
+          onChange={(e) => setGeminiKey(e.target.value)}
+          className="w-full p-2 rounded-md bg-white/40 dark:bg-white/10 text-black dark:text-white placeholder-gray-700 dark:placeholder-white/70 border border-white/30"
+        />
+        <a
+          href="https://aistudio.google.com/app/apikey"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-blue-600 dark:text-blue-400 underline"
+        >
+          Get Gemini API Key
+        </a>
+
+        <input
+          type="text"
+          placeholder="Enter YouTube API Key"
+          value={youtubeKey}
+          onChange={(e) => setYoutubeKey(e.target.value)}
+          className="w-full p-2 rounded-md bg-white/40 dark:bg-white/10 text-black dark:text-white placeholder-gray-700 dark:placeholder-white/70 border border-white/30"
+        />
+        <a
+          href="https://console.cloud.google.com/apis/credentials"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-blue-600 dark:text-blue-400 underline"
+        >
+          Get YouTube API Key
+        </a>
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="w-full p-2 rounded-md bg-white/40 dark:bg-white/10 text-black dark:text-white border border-white/30"
+        />
+
+        <input
+          type="text"
+          placeholder="Preferred language (e.g. English, Hindi)"
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="w-full p-2 rounded-md bg-white/40 dark:bg-white/10 text-black dark:text-white placeholder-gray-700 dark:placeholder-white/70 border border-white/30"
+        />
+
+        {image && (
+          <img
+            src={image}
+            alt="Preview"
+            className="mt-4 rounded-xl max-h-64 object-cover mx-auto shadow-lg"
+          />
+        )}
+
+        <button
+          onClick={handleGenerateSongs}
+          className="w-full p-3 mt-2 rounded-md bg-white/50 dark:bg-white/20 text-black dark:text-white hover:bg-white/70 dark:hover:bg-white/30 transition font-semibold"
+        >
+          🎧 Suggest Songs
         </button>
       </div>
 
-      <input
-        type="text"
-        placeholder="Enter Gemini API Key"
-        value={geminiKey}
-        onChange={(e) => setGeminiKey(e.target.value)}
-        className="w-full p-2 mb-2 rounded border bg-transparent"
-      />
-      <a
-        href="https://aistudio.google.com/app/apikey"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm text-blue-400 underline"
-      >
-        Get your API key from Google AI Studio
-      </a>
-
-      <input
-        type="text"
-        placeholder="Enter YouTube API Key"
-        value={youtubeKey}
-        onChange={(e) => setYoutubeKey(e.target.value)}
-        className="w-full p-2 mb-2 rounded border bg-transparent"
-      />
-      <a
-        href="https://console.cloud.google.com/apis/credentials"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm text-blue-400 underline block mb-2"
-      >
-        Get your API key from Google Cloud Console
-      </a>
-
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="w-full mb-4"
-      />
-
-      <input
-        type="text"
-        placeholder="Preferred language (e.g. English, Hindi)"
-        value={language}
-        onChange={(e) => setLanguage(e.target.value)}
-        className="w-full p-2 mb-4 rounded border bg-transparent"
-      />
-
-      {image && (
-        <img
-          src={image}
-          alt="preview"
-          className="mt-2 mb-4 rounded-lg max-h-60 object-cover mx-auto"
-        />
-      )}
-
-      <button
-        onClick={handleGenerateSongs}
-        className="w-full px-6 py-2 bg-blue-500 hover:bg-blue-600 rounded text-white font-medium"
-      >
-        Suggest Songs
-      </button>
-
-      {loading && <p className="mt-4 text-center">Analyzing your photo and finding songs...</p>}
+      {loading && <p className="mt-4 text-center text-lg font-medium">Analyzing photo and fetching songs...</p>}
 
       {searchQuery && (
-        <div className="mt-4">
-          <p className="text-sm text-gray-300">
+        <div className="mt-6 text-center">
+          <p className="text-sm">
             🔍 YouTube search: <strong>{searchQuery}</strong>
           </p>
           <button
             onClick={() => fetchSongs(searchQuery)}
-            className="mt-2 text-sm text-blue-400 underline"
+            className="mt-2 w-full p-2 rounded-md bg-white/30 dark:bg-white/20 text-black dark:text-white hover:bg-white/50 dark:hover:bg-white/30 transition"
           >
-            More suggestions
+            🔃 More Suggestions
           </button>
         </div>
       )}
 
-      <div className="mt-4 grid gap-4">
+      <div className="mt-6 grid gap-4">
         {songs.map((song) => (
           <div
             key={song.id.videoId}
-            className={`p-3 rounded-lg flex gap-4 items-start border ${
-              darkMode ? 'border-white/20 bg-white/10' : 'border-black/10 bg-black/5'
-            }`}
+            className="p-3 rounded-lg flex gap-4 items-start border border-white/30 bg-white/20 dark:bg-white/10 backdrop-blur-md"
           >
             <img
               src={song.snippet.thumbnails.medium.url}
@@ -227,9 +211,9 @@ Respond with just the search query.`;
                 href={`https://www.youtube.com/watch?v=${song.id.videoId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 underline text-sm"
+                className="text-blue-600 dark:text-blue-400 underline text-sm"
               >
-                Play on YouTube
+                ▶️ Play on YouTube
               </a>
             </div>
           </div>

@@ -1,14 +1,15 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-  darkMode: 'class',
-  content: ['./index.html', './src/**/*.{js,jsx}'],
+module.exports = {
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-linear': 'linear-gradient(to right, #0f0c29, #302b63, #24243e)',
+      fontFamily: {
+        cursive: ['"Comic Neue"', 'cursive'],
+      },
+      animation: {
+        'bounce-slow': 'bounce 4s infinite',
       },
     },
   },
+  darkMode: 'class',
   plugins: [],
 };

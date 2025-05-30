@@ -1,16 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@1,700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  @apply bg-gradient-linear min-h-screen transition-colors duration-300;
-  font-family: 'Inter', sans-serif;
+  @apply font-cursive font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 min-h-screen transition-colors duration-300;
 }
 
-.glassmorphism {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 1rem;
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow infinite;
 }
