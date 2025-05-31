@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import UploadImage from './components/UploadImage';
-import { FaInstagram, FaMusic } from 'react-icons/fa';
+import FloatingIcons from './components/FloatingIcons';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 
 export default function App() {
@@ -16,19 +16,7 @@ export default function App() {
 
         {/* Floating Icons */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(10)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute text-pink-400 dark:text-pink-600 text-xl animate-bounce-slow"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animationDuration: `${5 + Math.random() * 5}s`,
-              }}
-            >
-              {i % 2 === 0 ? <FaInstagram /> : <FaMusic />}
-            </div>
-          ))}
+          <FloatingIcons />
         </div>
 
         {/* Header */}
