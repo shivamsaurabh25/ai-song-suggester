@@ -3,7 +3,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        cursive: ['"Comic Neue"', 'cursive'],
+        heading: ['Urbanist', 'sans-serif'],
+        body: ['Manrope', 'sans-serif'],
       },
       animation: {
         'bounce-slow': 'bounce 4s infinite',

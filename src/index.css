@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 body {
-  @apply font-cursive font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 min-h-screen transition-colors duration-300;
+  @apply bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 min-h-screen transition-colors duration-300;
 }
 
 .glass {

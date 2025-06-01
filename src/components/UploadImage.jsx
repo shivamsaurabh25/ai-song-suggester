@@ -116,7 +116,7 @@ export default function UploadImage() {
     <div className="max-w-2xl mx-auto mt-10 p-6 rounded-2xl backdrop-blur-md bg-white/30 dark:bg-white/10 border border-white/20 shadow-md text-black dark:text-white">
       <div className="flex flex-col items-center">
         <AnimatedAvatar />
-        <p className="text-lg font-semibold">I'm your vibe-detecting AI DJ 🎧</p>
+        <p className="font-body text-base text-muted">I'm your vibe-detecting AI DJ 🎧</p>
       </div>
 
       {/* Inputs */}

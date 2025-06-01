@@ -8,7 +8,7 @@ export default function App() {
 
   return (
     <div className={`${darkMode ? 'dark' : ''}`}>
-      <div className={`relative font-cursive font-bold min-h-screen transition-all duration-500 
+      <div className={`relative min-h-screen transition-all duration-500 
         ${darkMode
           ? 'bg-gradient-to-br from-gray-900 to-black text-white'
           : 'bg-gradient-to-tr from-pink-100 via-yellow-100 to-blue-100 text-black'
@@ -21,7 +21,7 @@ export default function App() {
 
         {/* Header */}
         <header className="relative z-10 p-4 sm:p-6 flex justify-between items-center">
-          <h1 className="text-xl sm:text-2xl">AI Song Vibe Suggester For IG 🎵</h1>
+          <h1 className="text-3xl sm:text-2xl font-heading font-bold">AI Song Vibe Suggester For IG 🎵</h1>
           <button
             onClick={() => setDarkMode(!darkMode)}
             className="p-2 rounded-full bg-white text-black hover:bg-gray-200 transition dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
