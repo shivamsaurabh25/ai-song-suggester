@@ -1,28 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import AnimatedAvatar from './AnimatedAvatar';
+
+const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const youtubeKey = import.meta.env.VITE_YOUTUBE_API_KEY;
 
 export default function UploadImage() {
   const [image, setImage] = useState(null);
   const [imageBlob, setImageBlob] = useState(null);
-  const [geminiKey, setGeminiKey] = useState('');
-  const [youtubeKey, setYoutubeKey] = useState('');
   const [language, setLanguage] = useState('');
   const [loading, setLoading] = useState(false);
   const [songs, setSongs] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    const gemini = localStorage.getItem('gemini_api_key');
-    const youtube = localStorage.getItem('youtube_api_key');
-    if (gemini) setGeminiKey(gemini);
-    if (youtube) setYoutubeKey(youtube);
-  }, []);
-
-  useEffect(() => {
-    if (geminiKey) localStorage.setItem('gemini_api_key', geminiKey);
-    if (youtubeKey) localStorage.setItem('youtube_api_key', youtubeKey);
-  }, [geminiKey, youtubeKey]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -46,8 +35,8 @@ export default function UploadImage() {
   };
 
   const handleGenerateSongs = async () => {
-    if (!imageBlob || !geminiKey || !youtubeKey) {
-      alert('Please upload an image and enter both API keys');
+    if (!imageBlob) {
+      alert('Please upload an image');
       return;
     }
 
@@ -119,40 +108,7 @@ export default function UploadImage() {
         <p className="font-body text-base text-muted">I'm your vibe-detecting AI DJ 🎧</p>
       </div>
 
-      {/* Inputs */}
       <div className="space-y-4">
-        <input
-          type="text"
-          placeholder="Enter Gemini API Key"
-          value={geminiKey}
-          onChange={(e) => setGeminiKey(e.target.value)}
-          className="w-full p-2 rounded-md bg-white/40 dark:bg-white/10 text-black dark:text-white placeholder-gray-700 dark:placeholder-white/70 border border-white/30"
-        />
-        <a
-          href="https://aistudio.google.com/app/apikey"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-blue-600 dark:text-blue-400 underline"
-        >
-          Get Gemini API Key
-        </a>
-
-        <input
-          type="text"
-          placeholder="Enter YouTube API Key"
-          value={youtubeKey}
-          onChange={(e) => setYoutubeKey(e.target.value)}
-          className="w-full p-2 rounded-md bg-white/40 dark:bg-white/10 text-black dark:text-white placeholder-gray-700 dark:placeholder-white/70 border border-white/30"
-        />
-        <a
-          href="https://console.cloud.google.com/apis/credentials"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-blue-600 dark:text-blue-400 underline"
-        >
-          Get YouTube API Key
-        </a>
-
         <input
           type="file"
           accept="image/*"
