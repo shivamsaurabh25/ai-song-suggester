@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import AnimatedAvatar from './AnimatedAvatar';
+import base64 from 'base-64';
 
-const geminiKey = import.meta.env.VITE_GEMINI_API_KEY;
-const youtubeKey = import.meta.env.VITE_YOUTUBE_API_KEY;
+const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+const clientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
 
 export default function UploadImage() {
   const [image, setImage] = useState(null);
@@ -12,6 +13,7 @@ export default function UploadImage() {
   const [loading, setLoading] = useState(false);
   const [songs, setSongs] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [token, setToken] = useState('');
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -31,7 +33,21 @@ export default function UploadImage() {
   };
 
   const generateSongQueryPrompt = () => {
-    return `You are a vibe-based song recommender. Given a user's photo, describe the mood or vibe of the photo in a short phrase that could be used as a YouTube search query for a matching song. Include the language preference "${language}". Respond with just the search query.`;
+    return `You are a vibe-based song recommender. Given a user's photo, describe the mood or vibe of the photo in a short phrase that could be used as a Spotify search query for a matching song. Include the language preference "${language}". Respond with just the search query.`;
+  };
+
+  const fetchSpotifyToken = async () => {
+    const creds = base64.encode(`${clientId}:${clientSecret}`);
+    const res = await axios.post('https://accounts.spotify.com/api/token', 
+      'grant_type=client_credentials', 
+      {
+        headers: {
+          'Authorization': `Basic ${creds}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      }
+    );
+    return res.data.access_token;
   };
 
   const handleGenerateSongs = async () => {
@@ -42,11 +58,11 @@ export default function UploadImage() {
 
     setLoading(true);
     try {
-      const base64 = await fileToBase64(imageBlob);
+      const base64Img = await fileToBase64(imageBlob);
       const prompt = generateSongQueryPrompt();
 
       const geminiRes = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
         {
           contents: [
             {
@@ -55,7 +71,7 @@ export default function UploadImage() {
                 {
                   inline_data: {
                     mime_type: imageBlob.type,
-                    data: base64.split(',')[1],
+                    data: base64Img.split(',')[1],
                   },
                 },
               ],
@@ -65,7 +81,6 @@ export default function UploadImage() {
       );
 
       const query = geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-
       if (!query) {
         alert('Gemini did not return a valid query.');
         setLoading(false);
@@ -73,31 +88,34 @@ export default function UploadImage() {
       }
 
       setSearchQuery(query);
-      await fetchSongs(query);
+
+      const accessToken = await fetchSpotifyToken();
+      setToken(accessToken);
+
+      await fetchSpotifySongs(query, accessToken);
     } catch (err) {
       console.error(err);
-      alert('Something went wrong while generating song query.');
+      alert('Something went wrong while generating songs.');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchSongs = async (query) => {
+  const fetchSpotifySongs = async (query, accessToken) => {
     try {
-      const res = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
+      const res = await axios.get('https://api.spotify.com/v1/search', {
+        headers: { Authorization: `Bearer ${accessToken}` },
         params: {
-          part: 'snippet',
-          maxResults: 5,
           q: query,
-          key: youtubeKey,
-          type: 'video',
-          videoCategoryId: 10,
+          type: 'track',
+          limit: 5,
         },
       });
-      setSongs(res.data.items);
+
+      setSongs(res.data.tracks.items);
     } catch (err) {
       console.error(err);
-      alert('Failed to fetch songs from YouTube');
+      alert('Failed to fetch songs from Spotify.');
     }
   };
 
@@ -145,37 +163,32 @@ export default function UploadImage() {
       {searchQuery && (
         <div className="mt-6 text-center">
           <p className="text-sm">
-            🔍 YouTube search: <strong>{searchQuery}</strong>
+            🔍 Spotify search: <strong>{searchQuery}</strong>
           </p>
-          <button
-            onClick={() => fetchSongs(searchQuery)}
-            className="mt-2 w-full p-2 rounded-md bg-white/30 dark:bg-white/20 text-black dark:text-white hover:bg-white/50 dark:hover:bg-white/30 transition"
-          >
-            🔃 More Suggestions
-          </button>
         </div>
       )}
 
       <div className="mt-6 grid gap-4">
         {songs.map((song) => (
           <div
-            key={song.id.videoId}
+            key={song.id}
             className="p-3 rounded-lg flex gap-4 items-start border border-white/30 bg-white/20 dark:bg-white/10 backdrop-blur-md"
           >
             <img
-              src={song.snippet.thumbnails.medium.url}
-              alt={song.snippet.title}
+              src={song.album.images[1]?.url}
+              alt={song.name}
               className="w-32 h-20 object-cover rounded"
             />
             <div>
-              <p className="font-semibold">{song.snippet.title}</p>
+              <p className="font-semibold">{song.name}</p>
+              <p className="text-sm text-muted">{song.artists.map((a) => a.name).join(', ')}</p>
               <a
-                href={`https://www.youtube.com/watch?v=${song.id.videoId}`}
+                href={song.external_urls.spotify}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 underline text-sm"
+                className="text-green-600 dark:text-green-400 underline text-sm"
               >
-                ▶️ Play on YouTube
+                ▶️ Listen on Spotify
               </a>
             </div>
           </div>
