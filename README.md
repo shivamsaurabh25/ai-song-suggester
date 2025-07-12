@@ -143,7 +143,7 @@ Prompt sent to Gemini API:
 
 ## 🙋‍♂️ Author
 
-**[Shivam Saurabh](https://shivamsaurabh25-portfolio.vercel.app/)**
+**[Shivam Saurabh](https://dev-modern-portfolio.vercel.app/)**
 🎓 BCA Student | 💻 Web Dev | 🤖 AI + Web Enthusiast
 🔗 [LinkedIn](https://linkedin.com/in/shivamsaurabh25)
 📦 [Instagram](https://www.instagram.com/shivamsaurabh25/)
